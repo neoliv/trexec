@@ -1,15 +1,49 @@
 # trexec
-This tool helps when top is not able to find the origine of a CPU load on your Linux system.  
-It relies on netlink interface to the kernel to track all processes event the very short lived ones. For example if there is a script forking grep, perl, awk, expr, basename and so on the CPU load may be high but none of these processes will appear on usual sampling tools like top. trexec will gather data and publish a summary of the most executed commands and what script is executing them.
+This tool helps when top is not able to find the origin of a CPU load on your Linux system.  
+It relies on netlink interface to the kernel to track all processes (even the very short lived ones). For example if there is a script forking grep, perl, awk, expr, basename and so on the CPU load may be high but these processes will stay under the radar of usual sampling tools like top. trexec will gather data and publish a summary of the most executed commands and their origin.  
 Hope this helps.  
+
+Install:  
+
+go get github.com/neoliv/trexec
+
+
+Example:
+
 Here is an output sample:  
 ```
+hostname:           crawling01
+date:               2017-11-09 12:02:55.702423786 +0000 UTC
+time since start:   2m48.071796286s
+total exec calls:   66942 (398.29e/s)
+forks w/o exec:     6681 (39.76f/s)
+number of comamnds: 153
+----- top 10 commands sorted by number of exec ---------------------------------
+tr: 42.34% (42324) 251.82e/s 31.882631999s (3.14%)
+bc: 24.31% (24294) 144.55e/s
+grep: 6.87% (6870) 40.88e/s 23.635982653s (2.32%)
+wc: 4.84% (4840) 28.80e/s 8.95871531s (0.88%)
+cut: 4.46% (4459) 26.53e/s 2.686681305s (0.26%)
+hog.sh: 3.30% (3301) 19.64e/s 26.316595303s (2.59%)
+sed: 1.79% (1787) 10.63e/s 11.564354125s (1.14%)
+check_active_co: 1.45% (1454) 8.65e/s 6.793365866s (0.67%)
+expr: 0.81% (810) 4.82e/s 700.056166ms (0.07%)
+basename: 0.65% (651) 3.87e/s 2.707907174s (0.27%)
+awk: 0.62% (618) 3.68e/s 2.230339281s (0.22%)
+----- top 10 commands sorted by sum of subprocesses number of exec -------------
+hog.sh: 88.66% (59351) 353.13e/s
+monitor.sh: 77.80% (52083) 309.89e/s
+start_schedule.: 77.78% (52070) 309.81e/s
+ApplicationAgent: 14.47% (9687) 57.64e/s
+su: 14.34% (9601) 57.12e/s
 ```  
+
+With the above output you see that the hog.sh is responsible for a lot of short lived processes and that it could be a good idea to rewrite that script.
 
 See the -h below:  
 ```
 Usage for trexec:
-  -c	clear counters every time we display stats.
+  -c clear counters every time we display stats.
   -i duration
     	interval between automatic stats output (eg: 30s, 10m, 2h).
   -o string
