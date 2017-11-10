@@ -22,6 +22,7 @@ You can ask for an updated summary by sending SIGUSR1 to the process or let it d
 eg: %s -i 30s -o /tmp/%s.out
   This will store a summary every 30s in the %s.out file.
   Every time you send a SIGUSR1 to the process (eg: pkill -10 %s), you will also get a fresh summary.
+  If you want a reset of the counters (like -c) you can use SIGUSR2.
 
 Notes about the displayed informations:
 
