@@ -192,23 +192,33 @@ func statsSub(dts float64) {
 
 // Display the histogram for command execution time.
 func statsEHist(dts float64) {
-	printSep(out, " command execution time histogram (%d executed commands) ", nbExitEv)
-	var ml int
+	var firsti, lasti int
 	var s uint64 // sum of all values in the histogram.
+	firsti = -1
 	for l := 0; l < len(ehist); l++ {
 		if ehist[l] != 0 {
-			ml = l
+			lasti = l
 			s += ehist[l]
+			if firsti < 0 {
+				firsti = l // index of the first non 0 sample
+			}
 		}
 	}
-	p := 1
-	for l := 0; l <= ml; l++ {
-		p *= 10
-		fmt.Fprintf(out, " <%5s |", time.Duration(p).String())
+	if firsti < 0 {
+		// nothing in the histogram, skip its display.
+		return
 	}
-	fmt.Fprintf(out, "\n")
-	for l := 0; l <= ml; l++ {
+	printSep(out, " command execution time histogram (%d executed commands) ", nbExitEv)
+	fmt.Fprintf(out, "|")
+	p := 1
+	for l := 0; l <= lasti; l++ {
 		p *= 10
+		if l >= firsti {
+			fmt.Fprintf(out, " <%5s |", time.Duration(p).String())
+		}
+	}
+	fmt.Fprintf(out, "\n|")
+	for l := firsti; l <= lasti; l++ {
 		if ehist[l] != 0 {
 			p5 := math.Ceil(float64(10000*ehist[l]) / float64(s))
 			pc := p5 / 100
