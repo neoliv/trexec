@@ -1,4 +1,7 @@
 # trexec
+
+You may want to look at topfast. trexec is a first attempt to get at short lived processes stats but I consider topfast superior.  
+
 This tool helps when top is not able to find the origin of a CPU load on your Linux system.  
 It relies on netlink interface to the kernel to track all processes (even the very short lived ones). For example if there is a script forking grep, perl, awk, expr, basename and so on the CPU load may be high but these processes will stay under the radar of usual sampling tools like top. trexec will gather data and publish a summary of the most executed commands and their origin.  
 Hope this helps.  
